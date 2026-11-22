@@ -59,51 +59,55 @@
 
 @keyframes cinemaDollyIn {
   0% {
-    transform: scale(1.02) translate3d(0%, 0%, 0);
+    transform: scale(1.0) translate3d(0%, 0%, 0);
   }
   100% {
-    transform: scale(1.15) translate3d(-1.2%, -0.8%, 0);
+    transform: scale(1.12) translate3d(-1.4%, -0.8%, 0);
   }
 }
 
 @keyframes cinemaPanRight {
   0% {
-    transform: scale(1.11) translate3d(-2.5%, 0.4%, 0);
+    transform: scale(1.1) translate3d(-2.2%, 0.4%, 0);
   }
   100% {
-    transform: scale(1.04) translate3d(2.2%, -0.6%, 0);
+    transform: scale(1.04) translate3d(2.0%, -0.5%, 0);
   }
 }
 
 @keyframes cinemaPushBar {
   0% {
-    transform: scale(1.04) translate3d(1.6%, 0.5%, 0);
+    transform: scale(1.03) translate3d(1.4%, 0.4%, 0);
   }
   100% {
-    transform: scale(1.16) translate3d(-1.4%, -1.0%, 0);
+    transform: scale(1.13) translate3d(-1.4%, -0.9%, 0);
   }
 }
 
 @keyframes cinemaWideDrift {
   0% {
-    transform: scale(1.14) translate3d(1.5%, -0.8%, 0);
+    transform: scale(1.12) translate3d(1.4%, -0.7%, 0);
   }
   100% {
-    transform: scale(1.02) translate3d(-1.5%, 0.4%, 0);
+    transform: scale(1.02) translate3d(-1.4%, 0.4%, 0);
   }
 }
 
 .cinema-motion-0 {
-  animation: cinemaDollyIn 7.8s ease-out forwards;
+  animation: cinemaDollyIn 14s ease-in-out infinite alternate;
 }
 .cinema-motion-1 {
-  animation: cinemaPanRight 7.8s ease-out forwards;
+  animation: cinemaPanRight 16s ease-in-out infinite alternate;
 }
 .cinema-motion-2 {
-  animation: cinemaPushBar 7.8s ease-out forwards;
+  animation: cinemaPushBar 15s ease-in-out infinite alternate;
 }
 .cinema-motion-3 {
-  animation: cinemaWideDrift 7.8s ease-out forwards;
+  animation: cinemaWideDrift 16s ease-in-out infinite alternate;
+}
+
+.cinema-paused {
+  animation-play-state: paused !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -39,7 +39,7 @@ export const Footer: React.FC = () => {
                 onClick={() => setRoute('home')}
                 className="hover:text-[#D5AE70] transition-colors cursor-pointer"
               >
-                Home & 3D Lounge
+                Home &amp; Heritage
               </button>
             </li>
             <li>

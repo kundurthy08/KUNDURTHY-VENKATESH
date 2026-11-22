@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Pause, Play, RotateCcw } from 'lucide-react';
+import nizamTourVideo from '../../assets/videos/charminar_nizam_tour.webm';
+import nizamHallImg from '../../assets/images/nizam_palace_hall_1795363759621.jpg';
+import nizamSamovarImg from '../../assets/images/nizam_samovar_counter_1795363760681.jpg';
+import nizamAlcoveImg from '../../assets/images/nizam_divan_alcove_1795363759678.jpg';
+import nizamCourtyardImg from '../../assets/images/cafe_3d_courtyard_arch_1795361406785.jpg';
 
 interface NizamSceneSpec {
   id: string;
   chapter: string;
   caption: string;
   image: string;
-  zoomFrom: number;
-  zoomTo: number;
-  panXFrom: number;
-  panXTo: number;
-  panYFrom: number;
-  panYTo: number;
+  motionClass: string;
+  startSec: number;
 }
 
 const NIZAM_SCENES: NizamSceneSpec[] = [
@@ -19,58 +20,37 @@ const NIZAM_SCENES: NizamSceneSpec[] = [
     id: 'nizam-hall',
     chapter: '01 · Grand Nizam Hall',
     caption: 'Cusped heritage green & gold-leaf mehrab arches illuminated by crystal chandeliers',
-    image: '/src/assets/images/nizam_palace_hall_1795363759621.jpg',
-    zoomFrom: 1.0,
-    zoomTo: 1.12,
-    panXFrom: -0.015,
-    panXTo: 0.015,
-    panYFrom: 0.01,
-    panYTo: -0.01,
+    image: nizamHallImg,
+    motionClass: 'cinema-motion-0',
+    startSec: 0,
   },
   {
     id: 'nizam-samovar',
     chapter: '02 · Royal Samovar Bar',
     caption: 'Hand-hammered antique brass samovar, gold-rimmed porcelain & pastry vitrine',
-    image: '/src/assets/images/nizam_samovar_counter_1795363760681.jpg',
-    zoomFrom: 1.08,
-    zoomTo: 1.0,
-    panXFrom: 0.02,
-    panXTo: -0.02,
-    panYFrom: 0.0,
-    panYTo: -0.012,
+    image: nizamSamovarImg,
+    motionClass: 'cinema-motion-1',
+    startSec: 6,
   },
   {
     id: 'nizam-alcove',
     chapter: '03 · Velvet Divan Alcove',
     caption: 'Emerald velvet seating framed by carved teakwood jaali & gilded archways',
-    image: '/src/assets/images/nizam_divan_alcove_1795363759678.jpg',
-    zoomFrom: 1.0,
-    zoomTo: 1.13,
-    panXFrom: 0.012,
-    panXTo: -0.018,
-    panYFrom: -0.01,
-    panYTo: 0.012,
+    image: nizamAlcoveImg,
+    motionClass: 'cinema-motion-2',
+    startSec: 12,
   },
   {
     id: 'nizam-courtyard',
     chapter: '04 · Courtyard Verandah',
     caption: 'Afternoon Deccani sunlight filtering across carved stone & verandah colonnades',
-    image: '/src/assets/images/cafe_3d_courtyard_arch_1795361406785.jpg',
-    zoomFrom: 1.1,
-    zoomTo: 1.01,
-    panXFrom: -0.022,
-    panXTo: 0.02,
-    panYFrom: 0.008,
-    panYTo: -0.008,
+    image: nizamCourtyardImg,
+    motionClass: 'cinema-motion-3',
+    startSec: 18,
   },
 ];
 
-const SCENE_DURATION_SEC = 6.5;
-const CROSSFADE_SEC = 1.6;
-
-function easeInOutSine(t: number): number {
-  return -(Math.cos(Math.PI * t) - 1) / 2;
-}
+const SCENE_DURATION_SEC = 6;
 
 interface CinematicCafeHeroProps {
   onNavigate: (route: 'menu' | 'reservations' | 'story') => void;
@@ -83,261 +63,210 @@ export const CinematicCafeHero: React.FC<CinematicCafeHeroProps> = ({
 }) => {
   const [activeChapter, setActiveChapter] = useState(0);
   const [playing, setPlaying] = useState(true);
-  const [progressRatio, setProgressRatio] = useState(0);
-  const [introPhase, setIntroPhase] = useState<'curtain' | 'dissolve' | 'complete'>(() => {
-    if (typeof window === 'undefined') return 'complete';
-    const reduced =
-      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) return 'complete';
-    try {
-      return sessionStorage.getItem('charminar_intro_seen') ? 'complete' : 'curtain';
-    } catch {
-      return 'curtain';
-    }
-  });
+  const [videoReady, setVideoReady] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const [introActive, setIntroActive] = useState(false);
+  const [introDissolving, setIntroDissolving] = useState(false);
   const [introRunKey, setIntroRunKey] = useState(0);
 
-  const stageRef = useRef<HTMLDivElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const playingRef = useRef(true);
-  const timelineSecRef = useRef(0);
-  const activeChapterRef = useRef(0);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  playingRef.current = playing;
-
-  const finishIntro = () => {
-    setIntroPhase('complete');
-    try {
-      sessionStorage.setItem('charminar_intro_seen', '1');
-    } catch {
-      // ignore storage failure
+  const replayIntro = () => {
+    setActiveChapter(0);
+    setPlaying(true);
+    setIntroDissolving(false);
+    setIntroActive(true);
+    setIntroRunKey((k) => k + 1);
+    const v = videoRef.current;
+    if (v && !videoFailed) {
+      try {
+        v.currentTime = 0;
+        void v.play();
+      } catch {
+        // Fallback image tour remains active
+      }
     }
   };
 
-  const replayIntro = () => {
-    timelineSecRef.current = 0;
-    activeChapterRef.current = 0;
-    setActiveChapter(0);
-    setProgressRatio(0);
-    setPlaying(true);
-    setIntroPhase('curtain');
-    setIntroRunKey((k) => k + 1);
+  const skipIntro = () => {
+    setIntroActive(false);
+    setIntroDissolving(false);
   };
 
-  const jumpToChapter = (index: number) => {
-    timelineSecRef.current = index * SCENE_DURATION_SEC;
-    activeChapterRef.current = index;
-    setActiveChapter(index);
-    setProgressRatio(index / NIZAM_SCENES.length);
-  };
-
-  // Opening sequence: Dark -> Golden Charminar Outline -> Logo -> Dissolve into Film
+  // Optional Royal Charminar outline entrance curtain when requested
   useEffect(() => {
-    if (introPhase !== 'curtain') return;
-    const t1 = window.setTimeout(() => setIntroPhase('dissolve'), 2300);
-    return () => window.clearTimeout(t1);
-  }, [introPhase, introRunKey]);
+    if (!introActive) return;
+    const t1 = window.setTimeout(() => setIntroDissolving(true), 2100);
+    const t2 = window.setTimeout(() => {
+      setIntroActive(false);
+      setIntroDissolving(false);
+    }, 2800);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, [introActive, introRunKey]);
 
+  // Verify WebM support & trigger reliable autoplay when mounted
   useEffect(() => {
-    if (introPhase !== 'dissolve') return;
-    const t2 = window.setTimeout(() => finishIntro(), 900);
-    return () => window.clearTimeout(t2);
-  }, [introPhase]);
+    const v = videoRef.current;
+    if (!v) return;
+    const canPlay =
+      typeof v.canPlayType === 'function' &&
+      (v.canPlayType('video/webm; codecs="vp8"') !== '' || v.canPlayType('video/webm') !== '');
+    if (!canPlay) {
+      setVideoFailed(true);
+      return;
+    }
 
-  // 60fps HTML5 Canvas Architectural Video Compositor (Silk Crossfades + Ken Burns Camera + Gold Motes)
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const stage = stageRef.current;
-    if (!canvas || !stage) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const reducedMotion =
+    const reduced =
       typeof window !== 'undefined' &&
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      setPlaying(false);
+      v.pause();
+      return;
+    }
 
-    const images: HTMLImageElement[] = NIZAM_SCENES.map((scene) => {
-      const img = new Image();
-      img.src = scene.image;
-      return img;
-    });
-
-    const motes = Array.from({ length: 28 }, () => ({
-      x: Math.random(),
-      y: Math.random(),
-      r: 1.0 + Math.random() * 1.8,
-      vy: 0.012 + Math.random() * 0.02,
-      vx: (Math.random() - 0.5) * 0.006,
-      alpha: 0.14 + Math.random() * 0.28,
-      phase: Math.random() * Math.PI * 2,
-    }));
-
-    const resize = () => {
-      if (!stage || !canvas) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = stage.clientWidth || 1280;
-      const h = stage.clientHeight || 620;
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    const drawCoverImage = (
-      img: HTMLImageElement,
-      spec: NizamSceneSpec,
-      localProgress: number,
-      alpha: number
-    ) => {
-      if (!img.complete || img.naturalWidth === 0 || alpha <= 0.001) return;
-      const cw = canvas.width;
-      const ch = canvas.height;
-      const ease = easeInOutSine(Math.min(Math.max(localProgress, 0), 1));
-
-      const zoom = spec.zoomFrom + (spec.zoomTo - spec.zoomFrom) * ease;
-      const panX = spec.panXFrom + (spec.panXTo - spec.panXFrom) * ease;
-      const panY = spec.panYFrom + (spec.panYTo - spec.panYFrom) * ease;
-
-      const imgAspect = img.naturalWidth / img.naturalHeight;
-      const canvasAspect = cw / ch;
-
-      let drawW = cw;
-      let drawH = ch;
-      if (canvasAspect > imgAspect) {
-        drawW = cw;
-        drawH = cw / imgAspect;
-      } else {
-        drawH = ch;
-        drawW = ch * imgAspect;
-      }
-
-      drawW *= zoom;
-      drawH *= zoom;
-
-      const dx = (cw - drawW) / 2 + panX * cw;
-      const dy = (ch - drawH) / 2 + panY * ch;
-
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.drawImage(img, dx, dy, drawW, drawH);
-      ctx.restore();
-    };
-
-    const totalCycle = NIZAM_SCENES.length * SCENE_DURATION_SEC;
-    let rafId = 0;
-    let lastNow = performance.now();
-    let uiSyncCounter = 0;
-
-    const renderFrame = (now: number) => {
-      const dt = Math.min((now - lastNow) / 1000, 0.05);
-      lastNow = now;
-
-      if (playingRef.current && !reducedMotion) {
-        timelineSecRef.current = (timelineSecRef.current + dt) % totalCycle;
-      }
-
-      const t = timelineSecRef.current;
-      const currIdx = Math.floor(t / SCENE_DURATION_SEC) % NIZAM_SCENES.length;
-      const nextIdx = (currIdx + 1) % NIZAM_SCENES.length;
-      const sceneElapsed = t % SCENE_DURATION_SEC;
-      const currProgress = sceneElapsed / SCENE_DURATION_SEC;
-
-      const fadeStart = SCENE_DURATION_SEC - CROSSFADE_SEC;
-      let nextAlpha = 0;
-      if (sceneElapsed > fadeStart) {
-        nextAlpha = easeInOutSine((sceneElapsed - fadeStart) / CROSSFADE_SEC);
-      }
-
-      ctx.fillStyle = '#0A1813';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      drawCoverImage(images[currIdx], NIZAM_SCENES[currIdx], currProgress, 1.0);
-      if (nextAlpha > 0.002) {
-        const nextLocalProgress = (sceneElapsed - fadeStart) / SCENE_DURATION_SEC;
-        drawCoverImage(images[nextIdx], NIZAM_SCENES[nextIdx], nextLocalProgress, nextAlpha);
-      }
-
-      // Subtle warm golden motes drifting in chandelier light
-      if (!reducedMotion) {
-        const cw = canvas.width;
-        const ch = canvas.height;
-        for (let i = 0; i < motes.length; i++) {
-          const m = motes[i];
-          if (playingRef.current) {
-            m.y -= m.vy * dt;
-            m.x += (m.vx + Math.sin(now * 0.0007 + m.phase) * 0.003) * dt;
-            if (m.y < -0.04) {
-              m.y = 1.04;
-              m.x = Math.random();
-            }
-          }
-          const px = m.x * cw;
-          const py = m.y * ch;
-          const rad = m.r * 3.5;
-          const grad = ctx.createRadialGradient(px, py, 0, px, py, rad);
-          grad.addColorStop(0, `rgba(246, 214, 148, ${m.alpha})`);
-          grad.addColorStop(1, 'rgba(246, 214, 148, 0)');
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(px, py, rad, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      if (activeChapterRef.current !== currIdx) {
-        activeChapterRef.current = currIdx;
-        setActiveChapter(currIdx);
-      }
-      uiSyncCounter = (uiSyncCounter + 1) % 4;
-      if (uiSyncCounter === 0) {
-        setProgressRatio(t / totalCycle);
-      }
-
-      rafId = requestAnimationFrame(renderFrame);
-    };
-
-    rafId = requestAnimationFrame(renderFrame);
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', resize);
-    };
+    v.muted = true;
+    v.defaultMuted = true;
+    const playPromise = v.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {
+        // Autoplay blocked — fallback animated Nizam stills remain 100% visible
+      });
+    }
   }, []);
 
+  // Fallback chapter timer whenever video isn't driving playback
+  useEffect(() => {
+    if (!playing || (videoReady && !videoFailed)) return;
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    const timer = window.setInterval(() => {
+      setActiveChapter((prev) => (prev + 1) % NIZAM_SCENES.length);
+    }, SCENE_DURATION_SEC * 1000);
+    return () => window.clearInterval(timer);
+  }, [playing, videoReady, videoFailed]);
+
+  const handleTogglePlay = () => {
+    const next = !playing;
+    setPlaying(next);
+    const v = videoRef.current;
+    if (v && !videoFailed) {
+      if (next) {
+        void v.play().catch(() => {
+          // Safe ignore
+        });
+      } else {
+        v.pause();
+      }
+    }
+  };
+
+  const handleSelectChapter = (idx: number) => {
+    setActiveChapter(idx);
+    const v = videoRef.current;
+    const scene = NIZAM_SCENES[idx];
+    if (v && !videoFailed && scene) {
+      try {
+        v.currentTime = scene.startSec;
+      } catch {
+        // Safe ignore if metadata is still loading
+      }
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    const v = videoRef.current;
+    if (!v || !videoReady || videoFailed) return;
+    const idx = Math.floor(v.currentTime / SCENE_DURATION_SEC) % NIZAM_SCENES.length;
+    if (idx !== activeChapter && idx >= 0 && idx < NIZAM_SCENES.length) {
+      setActiveChapter(idx);
+    }
+  };
+
   const currentScene = NIZAM_SCENES[activeChapter] || NIZAM_SCENES[0];
+  const showVideoLayer = videoReady && !videoFailed;
 
   return (
     <div className="space-y-6">
-      {/* 1. UNOBSTRUCTED FULL-BLEED ROYAL NIZAM ARCHITECTURAL CINEMA STAGE */}
-      <div
-        ref={stageRef}
-        className="relative w-full aspect-[16/9] max-h-[640px] min-h-[340px] overflow-hidden bg-[#0A1813] rounded-2xl border border-[#D5AE70]/35 shadow-sm"
-      >
-        <canvas
-          ref={canvasRef}
-          className="w-full h-full block"
-          aria-label="Royal Nizam Style Charminar Café Architectural Cinema"
-        />
+      {/* 1. UNOBSTRUCTED FULL-BLEED ROYAL NIZAM ARCHITECTURAL VIDEO STAGE */}
+      <div className="relative w-full h-[320px] sm:h-[460px] lg:h-[600px] overflow-hidden bg-[#173E32] rounded-2xl border border-[#D5AE70]/40 shadow-sm">
+        {/* Layer 0: Immediate High-Res Architectural Backdrop (guarantees zero green/blank frames) */}
+        {NIZAM_SCENES.map((scene, idx) => {
+          const isActive = idx === activeChapter;
+          return (
+            <div
+              key={scene.id}
+              className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+              style={{
+                opacity: isActive ? 1 : 0,
+                zIndex: isActive ? 1 : 0,
+                pointerEvents: isActive ? 'auto' : 'none',
+              }}
+              aria-hidden={!isActive}
+            >
+              <img
+                src={scene.image}
+                alt={scene.caption}
+                loading="eager"
+                decoding="sync"
+                className={`w-full h-full object-cover ${scene.motionClass} ${
+                  playing ? '' : 'cinema-paused'
+                }`}
+              />
+            </div>
+          );
+        })}
 
-        {/* Delicate bottom edge vignette solely for bottom cinema bar contrast */}
+        {/* Layer 1: Native HTML5 Royal Nizam Architectural Film (<video>) */}
+        {!videoFailed && (
+          <video
+            ref={videoRef}
+            src={nizamTourVideo}
+            poster={NIZAM_SCENES[0].image}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            onLoadedData={() => setVideoReady(true)}
+            onCanPlay={() => setVideoReady(true)}
+            onPlaying={() => setVideoReady(true)}
+            onTimeUpdate={handleTimeUpdate}
+            onError={() => setVideoFailed(true)}
+            aria-label="Charminar Café Royal Nizam interior architectural film"
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+            style={{
+              opacity: showVideoLayer ? 1 : 0,
+              zIndex: 2,
+            }}
+          />
+        )}
+
+        {/* Delicate Bottom-Edge Scrim Only for Cinema Control Legibility */}
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#091611]/90 via-[#091611]/40 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-24 z-[3] bg-gradient-to-t from-[#091611]/90 via-[#091611]/40 to-transparent"
           aria-hidden="true"
         />
 
-        {/* Cinematic Opening Curtain: Dark -> Golden Charminar Outline -> Emerging Logo */}
-        {introPhase !== 'complete' && (
+        {/* Optional Royal Charminar Golden Outline Entrance (Triggered by Royal Entrance) */}
+        {introActive && (
           <div
             key={introRunKey}
-            className={`absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#0A1813] px-6 transition-opacity duration-900 ${
-              introPhase === 'dissolve' ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            className={`absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#0A1813] px-6 transition-opacity duration-700 ${
+              introDissolving ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
-            aria-live="polite"
           >
             <svg
               viewBox="0 0 320 210"
-              className="w-60 sm:w-76 h-auto text-[#D5AE70]"
+              className="w-56 sm:w-72 h-auto text-[#D5AE70]"
               fill="none"
               aria-hidden="true"
             >
@@ -357,7 +286,6 @@ export const CinematicCafeHero: React.FC<CinematicCafeHeroProps> = ({
                    M124 64 Q160 22 196 64 M160 36 L160 16"
               />
             </svg>
-
             <div className="animate-charminar-logo text-center mt-4">
               <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#D5AE70]">
                 Royal Nizam Heritage · Hyderabad Café
@@ -366,10 +294,9 @@ export const CinematicCafeHero: React.FC<CinematicCafeHeroProps> = ({
                 CHARMINAR CAFÉ
               </h2>
             </div>
-
             <button
               type="button"
-              onClick={finishIntro}
+              onClick={skipIntro}
               className="mt-6 px-4 py-1.5 rounded-lg border border-[#D5AE70]/45 text-xs font-medium text-[#F0E5D0]/90 hover:bg-[#173E32] hover:text-[#D5AE70] transition-colors cursor-pointer"
             >
               Skip Entrance
@@ -377,9 +304,9 @@ export const CinematicCafeHero: React.FC<CinematicCafeHeroProps> = ({
           </div>
         )}
 
-        {/* Minimal Bottom-Edge Cinema Controls (Never obstructs the center/top Nizam arches) */}
+        {/* Minimal Bottom-Edge Cinema Controls */}
         <div className="absolute bottom-3 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-3">
-          <div className="hidden sm:block text-xs text-[#F0E5D0]/90">
+          <div className="hidden md:block text-xs text-[#F0E5D0]/95">
             <span className="font-semibold text-[#D5AE70]">{currentScene.chapter}</span>
             <span className="mx-2 text-[#D5AE70]/50">·</span>
             <span>{currentScene.caption}</span>
@@ -390,7 +317,7 @@ export const CinematicCafeHero: React.FC<CinematicCafeHeroProps> = ({
               <button
                 key={scene.id}
                 type="button"
-                onClick={() => jumpToChapter(idx)}
+                onClick={() => handleSelectChapter(idx)}
                 className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
                   idx === activeChapter
                     ? 'bg-[#D5AE70] text-[#173E32] font-semibold'
@@ -403,7 +330,7 @@ export const CinematicCafeHero: React.FC<CinematicCafeHeroProps> = ({
 
             <button
               type="button"
-              onClick={() => setPlaying((v) => !v)}
+              onClick={handleTogglePlay}
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#091611]/80 text-[11px] font-medium text-[#F0E5D0] hover:bg-[#173E32] transition-colors cursor-pointer"
               aria-label={playing ? 'Pause film' : 'Play film'}
             >
@@ -421,17 +348,9 @@ export const CinematicCafeHero: React.FC<CinematicCafeHeroProps> = ({
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#091611]/80 border border-[#D5AE70]/35 text-[11px] font-medium text-[#F0E5D0] hover:bg-[#173E32] transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3 h-3 text-[#D5AE70]" />
-              <span>Replay</span>
+              <span>Royal Entrance</span>
             </button>
           </div>
-        </div>
-
-        {/* Continuous Subtle Gold Cinema Progress Scrubber */}
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#D5AE70]/20 z-10">
-          <div
-            className="h-full bg-[#D5AE70] transition-[width] duration-150 ease-linear"
-            style={{ width: `${Math.min(Math.max(progressRatio * 100, 1), 100)}%` }}
-          />
         </div>
       </div>
 

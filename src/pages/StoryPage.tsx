@@ -1,5 +1,8 @@
 import React from 'react';
 import { useCafe } from '../context/CafeContext';
+import nizamHallImg from '../assets/images/nizam_palace_hall_1795363759621.jpg';
+import nizamSamovarImg from '../assets/images/nizam_samovar_counter_1795363760681.jpg';
+import nizamAlcoveImg from '../assets/images/nizam_divan_alcove_1795363759678.jpg';
 
 export const StoryPage: React.FC = () => {
   const { contentBlocks, setRoute } = useCafe();
@@ -29,9 +32,8 @@ export const StoryPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
         <div className="rounded-2xl overflow-hidden border border-[#30231C]/12 bg-[#173E32] min-h-[340px]">
           <img
-            src="/src/assets/images/nizam_palace_hall_1795363759621.jpg"
+            src={nizamHallImg}
             alt="Charminar Café Royal Nizam grand hall interior"
-            referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
           />
         </div>
@@ -95,9 +97,8 @@ export const StoryPage: React.FC = () => {
         <div className="bg-[#FFFDF8] rounded-2xl border border-[#30231C]/12 overflow-hidden">
           <div className="aspect-[16/9] bg-[#173E32]">
             <img
-              src="/src/assets/images/nizam_samovar_counter_1795363760681.jpg"
+              src={nizamSamovarImg}
               alt="Royal Nizam brass samovar counter and porcelain Irani chai service"
-              referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
             />
           </div>
@@ -116,9 +117,8 @@ export const StoryPage: React.FC = () => {
         <div className="bg-[#FFFDF8] rounded-2xl border border-[#30231C]/12 overflow-hidden">
           <div className="aspect-[16/9] bg-[#173E32]">
             <img
-              src="/src/assets/images/nizam_divan_alcove_1795363759678.jpg"
+              src={nizamAlcoveImg}
               alt="Royal Nizam emerald velvet divan alcove behind carved jaali screens"
-              referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
             />
           </div>
