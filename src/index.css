@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+    background-color: #F4EDDF;
+    color: #30231C;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-mono-tabular {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@keyframes charminarDraw {
+  0% {
+    stroke-dashoffset: 1400;
+    opacity: 0.25;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes charminarLogoReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-charminar-draw {
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: charminarDraw 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-charminar-logo {
+  opacity: 0;
+  animation: charminarLogoReveal 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.75s forwards;
+}
+
+@keyframes cinemaDollyIn {
+  0% {
+    transform: scale(1.02) translate3d(0%, 0%, 0);
+  }
+  100% {
+    transform: scale(1.15) translate3d(-1.2%, -0.8%, 0);
+  }
+}
+
+@keyframes cinemaPanRight {
+  0% {
+    transform: scale(1.11) translate3d(-2.5%, 0.4%, 0);
+  }
+  100% {
+    transform: scale(1.04) translate3d(2.2%, -0.6%, 0);
+  }
+}
+
+@keyframes cinemaPushBar {
+  0% {
+    transform: scale(1.04) translate3d(1.6%, 0.5%, 0);
+  }
+  100% {
+    transform: scale(1.16) translate3d(-1.4%, -1.0%, 0);
+  }
+}
+
+@keyframes cinemaWideDrift {
+  0% {
+    transform: scale(1.14) translate3d(1.5%, -0.8%, 0);
+  }
+  100% {
+    transform: scale(1.02) translate3d(-1.5%, 0.4%, 0);
+  }
+}
+
+.cinema-motion-0 {
+  animation: cinemaDollyIn 7.8s ease-out forwards;
+}
+.cinema-motion-1 {
+  animation: cinemaPanRight 7.8s ease-out forwards;
+}
+.cinema-motion-2 {
+  animation: cinemaPushBar 7.8s ease-out forwards;
+}
+.cinema-motion-3 {
+  animation: cinemaWideDrift 7.8s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Charminar Café",
+  "description": "Contemporary Hyderabad-inspired Indian café digital experience with interactive 3D architecture, online ordering, table reservations, and operations dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

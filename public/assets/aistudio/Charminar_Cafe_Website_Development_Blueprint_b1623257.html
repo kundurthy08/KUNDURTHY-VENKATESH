@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Charminar Café — complete website product brief, implementation roadmap, testing and deployment plan.">
+<title>Charminar Café | Website Development Blueprint</title>
+<style>
+:root{--green:#173e32;--green2:#245647;--terracotta:#8c3e25;--gold:#d5ae70;--cream:#f4eddf;--paper:#fffdf8;--ink:#2c2924;--muted:#706b62;--line:#e5dccd;--blue:#eaf1f7}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.65 Inter,Segoe UI,Arial,sans-serif}
+a{color:var(--green2)}.cover{min-height:92vh;background:linear-gradient(130deg,rgba(13,39,31,.96),rgba(25,61,49,.87)),radial-gradient(circle at 80% 20%,#9b6d39,transparent 35%);color:#fff;padding:7vw 9vw;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cover:after{content:"";position:absolute;width:440px;height:560px;border:2px solid rgba(213,174,112,.38);border-radius:220px 220px 8px 8px;right:8%;top:12%;box-shadow:inset 0 0 0 18px rgba(213,174,112,.05),inset 0 0 0 38px rgba(213,174,112,.04);pointer-events:none}
+.kicker{text-transform:uppercase;letter-spacing:.22em;color:var(--gold);font-size:.76rem;font-weight:700}.cover h1{font-family:Georgia,serif;font-size:clamp(3.2rem,8vw,7rem);line-height:.98;max-width:760px;margin:24px 0}.cover h1 span{color:var(--gold)}.cover p{max-width:640px;color:#e9e1d4;font-size:1.2rem}.cover-foot{display:flex;gap:24px;flex-wrap:wrap;color:#d6c9b6;font-size:.9rem;z-index:1}.cover-main{z-index:1}
+.shell{max-width:1180px;margin:auto;padding:36px 26px 80px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:38px}
+nav{position:sticky;top:18px;align-self:start;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;color:var(--green);margin-bottom:12px}nav a{display:block;text-decoration:none;color:var(--muted);padding:6px 0;font-size:.9rem}nav a:hover{color:var(--terracotta)}
+main{min-width:0}.intro{font-size:1.1rem;color:#514b42}.notice{border-left:4px solid var(--gold);background:#fff8e9;padding:16px 18px;border-radius:0 10px 10px 0;margin:22px 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:30px;margin:0 0 24px;scroll-margin-top:20px}
+h2{font: bold 1.85rem Georgia,serif;color:var(--green);margin:0 0 18px}h3{color:var(--terracotta);font-size:1.12rem;margin:25px 0 8px}h4{margin:16px 0 6px;color:var(--green)}
+p{margin:9px 0}ul,ol{padding-left:22px}li{margin:6px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:#fbf7ef;border:1px solid var(--line);border-radius:12px;padding:17px}.card b{color:var(--green)}
+.tag{display:inline-block;border-radius:99px;background:#e9efe9;color:var(--green);padding:3px 10px;font-size:.78rem;font-weight:700;margin:3px}
+table{border-collapse:collapse;width:100%;font-size:.92rem;margin:12px 0}th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f1eadc;color:var(--green)}tr:last-child td{border-bottom:0}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0}.step{background:#edf2ed;border:1px solid #d8e3d9;color:var(--green);padding:10px 13px;border-radius:9px;font-weight:650}.arrow{color:var(--terracotta);font-weight:800}
+.phase{border:1px solid var(--line);border-radius:13px;margin:14px 0;overflow:hidden}.phase-head{background:#f1eadc;padding:13px 17px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.phase-body{padding:16px 18px}.phase-head b{color:var(--green)}.small{color:var(--muted);font-size:.88rem}
+.code{background:#202b27;color:#f4eddf;border-radius:10px;padding:15px;overflow:auto;font:13px/1.6 Consolas,monospace;white-space:pre}
+.checklist li{list-style:"☐  ";padding-left:5px}
+.footer{padding:28px;text-align:center;color:var(--muted);font-size:.85rem}
+@media(max-width:850px){.shell{display:block;padding:18px 14px 50px}nav{position:relative;top:auto;max-height:none;margin-bottom:20px}.cover{min-height:70vh;padding:48px 25px}.cover:after{right:-170px;opacity:.45}.grid{grid-template-columns:1fr}section{padding:22px 18px}table{display:block;overflow-x:auto;white-space:normal}}
+@media print{body{background:white}.cover{min-height:260px;page-break-after:always}.shell{display:block;max-width:none;padding:0}nav{display:none}section{break-inside:avoid;box-shadow:none;border:1px solid #ccc}.phase{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="cover">
+  <div class="kicker">Digital brand experience · Product & engineering blueprint</div>
+  <div class="cover-main">
+    <div class="kicker">HYDERABAD HERITAGE · INDIAN CAFÉ CULTURE</div>
+    <h1>CHARMINAR<br><span>CAFÉ</span></h1>
+    <p>A complete plan for an immersive 3D café website and connected business platform — from brand discovery and asset preparation to development, testing and deployment.</p>
+  </div>
+  <div class="cover-foot"><span>PROJECT BLUEPRINT</span><span>Version 1.0</span><span>Prepared: 22 November 2026</span></div>
+</header>
+
+<div class="shell">
+<nav aria-label="Document contents">
+<strong>CONTENTS</strong>
+<a href="#vision">01 · Vision & principles</a><a href="#scope">02 · Scope & deliverables</a><a href="#journeys">03 · User journeys</a><a href="#architecture">04 · Technical architecture</a><a href="#assets">05 · 3D asset workflow</a><a href="#design">06 · Design system</a><a href="#business">07 · Business logic</a><a href="#data">08 · Data model</a><a href="#phases">09 · Phase-wise roadmap</a><a href="#testing">10 · Testing strategy</a><a href="#security">11 · Security & privacy</a><a href="#deployment">12 · Deployment plan</a><a href="#operations">13 · Operations & handover</a><a href="#acceptance">14 · Acceptance checklist</a><a href="#ide">15 · IDE implementation brief</a>
+</nav>
+
+<main>
+<p class="intro">This document is the working specification to give an IDE-based development workflow or an AI coding assistant. It defines the product, the expected customer and staff flows, the suggested system design, the staged build plan and the release checks. It is deliberately written so that the project can start with a polished public website and expand into operational software without rebuilding the foundation.</p>
+<div class="notice"><b>Important project assumption:</b> Charminar Café is treated as a Hyderabad-inspired Indian café brand. The actual café photographs, final menu, prices, address, operating hours, logo, payment provider, delivery coverage and policies must be supplied and approved by the owner. Do not invent these details or publish sample data as real business information.</div>
+
+<section id="vision">
+<h2>01. Product vision</h2>
+<p><b>Product name:</b> Charminar Café Digital Experience.</p>
+<p><b>Positioning:</b> A warm, contemporary Indian café identity with visual references to Hyderabad's heritage — arches, jaali patterns, brass details, deep green, terracotta, cream and antique gold. The brand must feel authentic and welcoming, not like a monument-themed tourist template.</p>
+<p><b>Core promise:</b> The website should communicate the atmosphere of the physical café while making it easy to explore the menu, place an order, reserve a table and connect with the business.</p>
+<div class="grid">
+<div class="card"><b>Brand experience</b><p>Immersive 3D entry, elegant transitions, food photography, responsive storytelling and consistent physical-to-digital aesthetics.</p></div>
+<div class="card"><b>Business utility</b><p>Accurate menu, order and reservation workflows, staff operations, reporting and controlled content updates.</p></div>
+<div class="card"><b>Performance</b><p>Fast 2D fallback, compressed 3D assets, lazy loading and a usable experience on mid-range mobile devices.</p></div>
+<div class="card"><b>Maintainability</b><p>Reusable components, documented business rules, role-based access and clear separation between UI and data.</p></div>
+</div>
+</section>
+
+<section id="scope">
+<h2>02. Scope & deliverables</h2>
+<h3>Customer-facing website</h3>
+<ul>
+<li>Home page with a cinematic 3D hero and a clear 2D fallback.</li><li>Our story / café identity page.</li><li>Menu with categories, product details, availability, prices and dietary/allergen information supplied by the owner.</li><li>Product detail and customisation where applicable.</li><li>Cart, checkout and order confirmation.</li><li>Table reservation request and confirmation workflow, if enabled by the owner.</li><li>Locations, opening hours, contact details, map link and social links.</li><li>Offers, events and announcements managed from the admin panel.</li><li>Privacy policy, terms, cancellation/refund policy and contact/help pages.</li>
+</ul>
+<h3>Admin / staff portal</h3>
+<ul><li>Secure login and role-based permissions.</li><li>Menu, categories, modifiers, prices, taxes and availability management.</li><li>Order queue with status changes and order detail.</li><li>Reservation list and table/slot controls, if reservations are enabled.</li><li>Offers and website content management.</li><li>Basic dashboard: orders, gross sales, discounts, taxes, cancellations and best-selling items.</li><li>Audit trail for important administrative changes.</li></ul>
+<h3>Optional integrations — confirm before building</h3>
+<table><tr><th>Integration</th><th>Purpose</th><th>Decision</th></tr>
+<tr><td>Payment gateway</td><td>Online payment and verified payment status; use a provider supported in the café's operating region.</td><td>Owner to select</td></tr>
+<tr><td>WhatsApp / SMS / email</td><td>Order and reservation notifications.</td><td>Provider and consent to confirm</td></tr>
+<tr><td>POS / billing software</td><td>Synchronise orders, taxes, bills and stock.</td><td>Check existing POS API first</td></tr>
+<tr><td>Maps</td><td>Directions and location display.</td><td>Confirm actual address</td></tr>
+<tr><td>Delivery platform</td><td>Third-party delivery integration if API access exists.</td><td>Optional; do not assume API access</td></tr></table>
+<div class="notice"><b>Recommended release boundary:</b> Launch the brand website, menu and enquiry/contact flows first. Add online ordering, payment, reservations and POS/inventory integration only after the owner confirms operating procedures and the required provider access.</div>
+</section>
+
+<section id="journeys">
+<h2>03. Main user journeys and system flows</h2>
+<h3>A. Browse the café</h3>
+<div class="flow"><span class="step">Open website</span><span class="arrow">→</span><span class="step">3D hero / 2D fallback</span><span class="arrow">→</span><span class="step">Explore story & menu</span><span class="arrow">→</span><span class="step">Location / contact / CTA</span></div>
+<p>The 3D scene is an enhancement, not a gate. Navigation, menu and contact actions must remain accessible if WebGL is unavailable, the device prefers reduced motion, or the 3D file fails to load.</p>
+<h3>B. Online order</h3>
+<div class="flow"><span class="step">Choose items</span><span class="arrow">→</span><span class="step">Customise</span><span class="arrow">→</span><span class="step">Cart validation</span><span class="arrow">→</span><span class="step">Pickup / delivery</span><span class="arrow">→</span><span class="step">Payment</span><span class="arrow">→</span><span class="step">Confirmed order</span></div>
+<ol><li>Load current menu and availability from the server.</li><li>Customer selects items, quantities and permitted modifiers.</li><li>Server revalidates product status, price, quantity, tax and any minimum order rules. Never trust client-side totals.</li><li>Customer selects pickup or an enabled delivery method and supplies only the required contact details.</li><li>Server creates a pending order and payment attempt where online payment is enabled.</li><li>Payment is marked successful only after a verified server-side gateway confirmation/webhook. Never rely only on the browser redirect.</li><li>Confirmed order appears in the staff order queue and customer receives a confirmation through enabled channels.</li><li>Staff updates preparation and fulfilment status. Customer sees the latest status where tracking is enabled.</li></ol>
+<p><b>Suggested order states:</b> Draft → Pending Payment → Placed → Accepted → Preparing → Ready → Completed. Additional terminal states: Payment Failed, Cancelled, Refunded. Configure the exact transitions with the café owner. Record who changed each status and when.</p>
+<h3>C. Table reservation</h3>
+<div class="flow"><span class="step">Select date & time</span><span class="arrow">→</span><span class="step">Party size</span><span class="arrow">→</span><span class="step">Check capacity</span><span class="arrow">→</span><span class="step">Submit request</span><span class="arrow">→</span><span class="step">Confirm / decline</span></div>
+<p>Prevent overlapping bookings using server-side capacity checks and a database transaction or equivalent concurrency-safe reservation mechanism. Define slot duration, grace period, opening hours, blackout dates, maximum party size, cancellation rules and whether staff approval is required. Do not show a slot as available based only on stale browser data.</p>
+<h3>D. Staff order handling</h3>
+<div class="flow"><span class="step">New order alert</span><span class="arrow">→</span><span class="step">Accept / reject</span><span class="arrow">→</span><span class="step">Prepare</span><span class="arrow">→</span><span class="step">Ready</span><span class="arrow">→</span><span class="step">Hand over / complete</span></div>
+<p>Provide clear status filters, order timestamps, item modifiers, customer instructions and an exception path for unavailable items. Cancellation, refund and price changes require authorised roles and an audit record.</p>
+</section>
+
+<section id="architecture">
+<h2>04. Suggested technical architecture</h2>
+<p>Use a modular full-stack architecture. Keep the first release straightforward; do not introduce microservices unless real scale or integration requirements justify them.</p>
+<div class="grid">
+<div class="card"><b>Frontend</b><p>Next.js with React and TypeScript. Responsive pages, reusable UI, accessible navigation and server-rendered SEO content.</p></div>
+<div class="card"><b>3D layer</b><p>Three.js with React Three Fiber, Drei helpers where useful, Blender for asset preparation, GLB/glTF delivery.</p></div>
+<div class="card"><b>Backend</b><p>Next.js server routes/server actions or a separately hosted Node API. Validate every write on the server.</p></div>
+<div class="card"><b>Database & auth</b><p>PostgreSQL (managed provider such as Supabase is an option), secure authentication and role-based access.</p></div>
+<div class="card"><b>Media</b><p>Object storage or an image CDN for optimised photographs, 3D files and textures. Keep source assets separately backed up.</p></div>
+<div class="card"><b>Hosting</b><p>Frontend hosting such as Vercel or equivalent; managed database/storage; custom domain with HTTPS.</p></div>
+</div>
+<h3>High-level architecture</h3>
+<div class="code">Customer / Staff Browser
+        |
+        v
+Responsive Next.js Website
+  |-- Public pages and menu
+  |-- 3D scene (GLB / textures)
+  |-- Cart and checkout UI
+  |-- Admin / staff portal
+        |
+        v
+Server-side API / Business Services
+  |-- Menu & pricing validation
+  |-- Orders & payment verification
+  |-- Reservations & capacity checks
+  |-- Content / offers management
+  |-- Notifications & reporting
+        |
+        +------ PostgreSQL database
+        +------ Object storage / CDN
+        +------ Payment gateway (optional)
+        +------ Email / SMS / WhatsApp (optional)
+        +------ POS / delivery APIs (only if supported)</div>
+<h3>Recommended repository layout</h3>
+<div class="code">charminar-cafe/
+  app/
+    (public)/                 # home, story, menu, contact, locations
+    (customer)/               # cart, checkout, account, orders
+    admin/                    # protected admin portal
+    api/                      # server endpoints / webhooks
+  components/
+    ui/
+    layout/
+    menu/
+    ordering/
+    reservations/
+    three/                    # 3D scene and loaders
+  features/
+    menu/
+    orders/
+    payments/
+    reservations/
+    content/
+    reporting/
+  lib/
+    auth/
+    db/
+    validation/
+    pricing/
+    notifications/
+  public/
+    models/                   # optimised GLB/glTF files
+    textures/
+    images/
+    fonts/
+  database/
+    migrations/
+    seeds/
+  tests/
+    unit/
+    integration/
+    e2e/
+  docs/
+  .env.example
+  README.md</div>
+<p class="small">The exact folders may change with the chosen framework version. Keep business rules in feature/service modules rather than embedding them inside page components.</p>
+</section>
+
+<section id="assets">
+<h2>05. Existing 3D asset intake and implementation</h2>
+<p>The downloaded 3D elements are a valuable starting point. Before coding, inventory them and confirm their formats, licences, scale, quality and intended use. Do not assume every downloaded asset is web-ready.</p>
+<h3>Asset inventory to prepare</h3>
+<table><tr><th>Asset type</th><th>Preferred format</th><th>Check</th></tr>
+<tr><td>3D models / scenes</td><td>GLB or glTF</td><td>Open correctly, correct orientation, scale, materials and licence.</td></tr>
+<tr><td>Textures</td><td>WebP / KTX2 where supported; source formats retained</td><td>Resolution, UV mapping, compression and colour space.</td></tr>
+<tr><td>Environment / HDR lighting</td><td>HDR / EXR source, optimised web output</td><td>Lighting quality and file size.</td></tr>
+<tr><td>Animations</td><td>GLB animation clips</td><td>Clip names, duration, looping and mobile performance.</td></tr>
+<tr><td>Brand assets</td><td>SVG / PNG / WebP</td><td>Correct logo, transparent background, clear-space rules.</td></tr>
+<tr><td>Photography</td><td>AVIF / WebP derivatives plus originals</td><td>Owner approval, crop, quality and image rights.</td></tr></table>
+<h3>Recommended asset folders</h3>
+<div class="code">public/
+  models/
+    cafe-interior.glb
+    charminar-inspired-arch.glb
+    coffee-cup.glb
+    food-display.glb
+  textures/
+  environment/
+  images/
+    hero/
+    menu/
+    interior/
+  audio/                      # only if the owner approves sound</div>
+<h3>3D integration workflow</h3>
+<ol><li>List every downloaded file with filename, extension, size, source URL/vendor and licence terms.</li><li>Preview each model in Blender or a glTF viewer. Check missing textures, material errors, scale, pivot/origin and animation clips.</li><li>Choose the assets that support the brand story. Avoid placing every model on the homepage.</li><li>Optimise in Blender or an appropriate glTF pipeline: remove hidden geometry, reduce unnecessary polygons, resize textures, reuse materials and compress geometry/textures where compatible.</li><li>Export as GLB for convenient web delivery. Keep editable source files and original downloads outside the production public folder.</li><li>Load the hero scene dynamically. Show a branded poster or lightweight 2D hero while the scene loads.</li><li>Use progressive enhancement: desktop may receive the richer scene; mobile receives a lighter scene or static visual based on device capability and performance.</li><li>Test keyboard access, reduced-motion preference, touch controls, low-memory devices and WebGL failure.</li></ol>
+<div class="notice"><b>Asset rights:</b> Verify that each downloaded model, texture, font and sound permits commercial website use and modification. Keep proof of licence. Attribution requirements must be followed.</div>
+<h3>Performance rules for 3D</h3>
+<ul><li>Set a measurable initial 3D payload budget with the developer; target a small first-load scene and load secondary models only when needed.</li><li>Use lazy loading, Draco/Meshopt geometry compression and KTX2/Basis texture compression when the toolchain supports them.</li><li>Limit real-time lights, shadows, transparent materials, post-processing and draw calls.</li><li>Pause or reduce rendering when the scene is off-screen or the tab is hidden.</li><li>Respect prefers-reduced-motion and provide a visible “Skip animation” or equivalent accessible route.</li><li>Do not make the menu, cart or navigation depend on the 3D canvas.</li></ul>
+</section>
+
+<section id="design">
+<h2>06. Design system and page plan</h2>
+<h3>Suggested visual direction</h3>
+<div class="grid">
+<div class="card"><b>Heritage Green</b><p>#173E32 — primary brand surfaces and key actions.</p></div>
+<div class="card"><b>Terracotta</b><p>#8C3E25 — warm accents and food-led highlights.</p></div>
+<div class="card"><b>Antique Gold</b><p>#D5AE70 — decorative details, borders and highlights.</p></div>
+<div class="card"><b>Warm Cream</b><p>#F4EDDF — readable backgrounds and menu surfaces.</p></div>
+</div>
+<p>Use these as an initial palette only. Confirm the final colours against the café's real interior, logo and signage. Use strong text contrast and avoid gold text on pale backgrounds for small copy.</p>
+<h3>Pages and key sections</h3>
+<table><tr><th>Page</th><th>Suggested sections / behaviour</th></tr>
+<tr><td>Home</td><td>3D hero, brand statement, signature items, story teaser, offers, location, opening hours and order CTA.</td></tr>
+<tr><td>Our story</td><td>Brand story approved by owner, café photographs, heritage/design narrative.</td></tr>
+<tr><td>Menu</td><td>Category filters, product cards, availability, price, dietary labels and item details.</td></tr>
+<tr><td>Product</td><td>Images, description, price, modifiers, allergen note and add-to-cart.</td></tr>
+<tr><td>Cart / checkout</td><td>Quantity editing, order summary, customer details, fulfilment method and payment.</td></tr>
+<tr><td>Reservations</td><td>Date, time, party size, contact details, availability and booking status.</td></tr>
+<tr><td>Contact / location</td><td>Address, map link, phone, hours, social accounts and enquiry form.</td></tr>
+<tr><td>Admin</td><td>Dashboard, orders, menu, reservations, offers, users/roles and reports.</td></tr></table>
+<h3>Experience rules</h3>
+<ul><li>Design mobile-first; primary actions must be reachable without exploring the 3D scene.</li><li>Use consistent header, footer, buttons, cards, typography, spacing and focus states.</li><li>Use real café photography wherever possible. Generated concept images are placeholders, not factual depictions of the café.</li><li>Do not autoplay sound. If ambient audio is included, it must be opt-in with a clear mute control.</li><li>Keep text content crawlable and provide page titles, descriptions, Open Graph metadata and structured local-business data only after verified details are supplied.</li></ul>
+</section>
+
+<section id="business">
+<h2>07. Business logic specification</h2>
+<h3>Menu and pricing</h3>
+<ul><li>Each menu item has name, description, category, base price, image, active/inactive state, availability schedule, tax classification, dietary labels and optional allergen information.</li><li>Modifiers/add-ons have their own price and allowed selection rules (required/optional, min/max selections).</li><li>Server calculates line totals, discounts, taxes, fees and final total from current database values.</li><li>When an item becomes unavailable, block new orders for it and show a clear message; never silently substitute another item.</li><li>Keep a price snapshot on each order so historical receipts do not change when menu prices are updated.</li></ul>
+<h3>Cart and checkout</h3>
+<ul><li>Validate item availability and modifier selections again at checkout.</li><li>Define pickup/delivery availability, service hours, minimum order, delivery zones/fees and estimated preparation time with the owner.</li><li>Use an idempotency key for order creation/payment initiation to avoid duplicate orders on repeated clicks or network retries.</li><li>Store payment provider reference and status. Do not store card numbers, CVV or sensitive payment credentials.</li><li>Support payment failure, retry, cancellation and refund paths according to provider capability and café policy.</li></ul>
+<h3>Reservations</h3>
+<ul><li>Define table capacity or booking-slot capacity, service hours, booking duration, buffer time, lead time and blackout periods.</li><li>Use atomic server-side checks to prevent two users booking the same capacity.</li><li>Define pending, confirmed, declined, cancelled, completed and no-show states as required.</li><li>Send confirmations only after the reservation reaches the configured confirmed state.</li></ul>
+<h3>Admin roles</h3>
+<table><tr><th>Role</th><th>Example permissions</th></tr>
+<tr><td>Owner / Super Admin</td><td>All settings, users, reports, menu, orders, reservations and integrations.</td></tr>
+<tr><td>Manager</td><td>Daily operations, menu availability, orders, reservations and operational reports.</td></tr>
+<tr><td>Order Staff</td><td>View and update assigned order statuses; no access to sensitive settings.</td></tr>
+<tr><td>Content Editor</td><td>Update approved website copy, images, offers and menu content within assigned permissions.</td></tr></table>
+<h3>Reporting definitions</h3>
+<p>Define metrics before building charts. Suggested metrics: order count, gross item sales, discounts, tax, delivery/service fees, refunds, net collected amount, average order value and item/category mix. Clearly label order date versus payment date and gross versus net figures. Reports must reconcile to the underlying orders and payment records.</p>
+</section>
+
+<section id="data">
+<h2>08. Initial database model</h2>
+<p>Use relational tables and foreign keys. This is a starting model, not a final migration script.</p>
+<table><tr><th>Table</th><th>Purpose / important fields</th></tr>
+<tr><td>users</td><td>id, name, email/phone, auth_provider_id, status, created_at.</td></tr>
+<tr><td>user_roles</td><td>user_id, role_id, branch_id (if multi-branch), granted_by.</td></tr>
+<tr><td>roles / permissions</td><td>Role names and explicit permission mapping.</td></tr>
+<tr><td>branches</td><td>id, name, verified address, phone, hours, timezone, active.</td></tr>
+<tr><td>menu_categories</td><td>id, name, sort_order, active.</td></tr>
+<tr><td>menu_items</td><td>id, category_id, name, description, base_price, tax_code, image, availability, active.</td></tr>
+<tr><td>modifier_groups / modifiers</td><td>Selection rules, option labels, price deltas and active state.</td></tr>
+<tr><td>orders</td><td>id, branch_id, customer_id, status, fulfilment_type, totals, address/contact snapshot, timestamps.</td></tr>
+<tr><td>order_items</td><td>order_id, item_id, item_name_snapshot, unit_price_snapshot, quantity, modifiers_snapshot, line_total.</td></tr>
+<tr><td>payments</td><td>order_id, provider, provider_reference, amount, currency, status, verified_at.</td></tr>
+<tr><td>reservations</td><td>branch_id, customer details, date/time, party_size, status, notes, timestamps.</td></tr>
+<tr><td>offers</td><td>code, type, value, validity, usage limits, eligibility and active state.</td></tr>
+<tr><td>inventory (optional)</td><td>ingredient/item, unit, stock, reorder threshold, movements and wastage.</td></tr>
+<tr><td>audit_logs</td><td>actor, action, entity, entity_id, timestamp and safe change summary.</td></tr>
+</table>
+<h3>Data and money handling</h3>
+<ul><li>Use integer minor units (for example paise) or a suitable fixed-precision decimal for money; never use floating-point arithmetic for financial totals.</li><li>Store timestamps consistently in UTC and display them in the branch's configured local timezone.</li><li>Use database constraints and transactions for order creation, stock movements and reservation capacity.</li><li>Define retention, deletion and export policies for customer data with the owner and applicable law.</li></ul>
+</section>
+
+<section id="phases">
+<h2>09. Phase-wise development roadmap</h2>
+<p>Recommended sequence: agree scope, build a dependable foundation, then add operational features. The estimates below are indicative for one small experienced team and will change with asset quality, integrations and owner feedback.</p>
+<div class="phase"><div class="phase-head"><b>Phase 0 — Discovery & requirement sign-off</b><span class="tag">2–4 working days</span></div><div class="phase-body"><b>Work:</b> owner interview, business model, branch count, menu collection, customer/staff journeys, order and reservation rules, payment/POS decisions, content and asset rights review.<br><b>Deliverables:</b> signed scope, page map, workflow diagrams, requirements register, content checklist, risks and acceptance criteria.<br><b>Exit gate:</b> owner approves scope, real business details and release-one features.</div></div>
+<div class="phase"><div class="phase-head"><b>Phase 1 — Brand, UX and 3D asset audit</b><span class="tag">3–6 working days</span></div><div class="phase-body"><b>Work:</b> visual direction, design tokens, responsive wireframes, page prototypes, 3D asset inventory, model tests and performance budget.<br><b>Deliverables:</b> approved UI design, component reference, asset register, optimised hero-scene proof of concept and mobile fallback.<br><b>Exit gate:</b> owner approves the design and the chosen 3D assets render reliably on target devices.</div></div>
+<div class="phase"><div class="phase-head"><b>Phase 2 — Project foundation & public website</b><span class="tag">5–8 working days</span></div><div class="phase-body"><b>Work:</b> repository, environments, CI checks, shared layout, homepage, story, menu display, contact/location, SEO basics and content structure.<br><b>Deliverables:</b> responsive staging website with placeholder content clearly marked until approved content is received.<br><b>Exit gate:</b> all public pages work on mobile and desktop; no critical accessibility or navigation defects.</div></div>
+<div class="phase"><div class="phase-head"><b>Phase 3 — 3D experience integration</b><span class="tag">4–8 working days</span></div><div class="phase-body"><b>Work:</b> Blender optimisation, GLB loading, scene lighting, camera path, scroll interaction, fallback poster, reduced-motion behaviour, loading and error states.<br><b>Deliverables:</b> integrated hero experience and documented asset pipeline.<br><b>Exit gate:</b> 3D experience meets agreed performance budget and never blocks core navigation.</div></div>
+<div class="phase"><div class="phase-head"><b>Phase 4 — Backend, database & admin</b><span class="tag">6–10 working days</span></div><div class="phase-body"><b>Work:</b> database migrations, authentication, roles, menu CRUD, content/offer management, admin dashboard and audit logging.<br><b>Deliverables:</b> protected admin portal and tested data services.<br><b>Exit gate:</b> unauthorised users cannot access protected functions; menu changes appear correctly on the public site.</div></div>
+<div class="phase"><div class="phase-head"><b>Phase 5 — Orders, payments & reservations</b><span class="tag">8–15 working days</span></div><div class="phase-body"><b>Work:</b> cart, checkout, pricing validation, order state machine, payment sandbox/webhooks, reservation capacity logic and notifications.<br><b>Deliverables:</b> end-to-end ordering/reservation flows in staging.<br><b>Exit gate:</b> successful, failed, duplicate and interrupted payment scenarios are handled; capacity conflicts are prevented. POS/delivery integrations are separate scope items.</div></div>
+<div class="phase"><div class="phase-head"><b>Phase 6 — Reporting, content and operational readiness</b><span class="tag">3–6 working days</span></div><div class="phase-body"><b>Work:</b> dashboard definitions, report reconciliation, real menu/content entry, policy pages, staff training and support procedures.<br><b>Deliverables:</b> owner-approved content, tested reports, staff guide and launch checklist.<br><b>Exit gate:</b> owner signs off menu, prices, taxes, policies, notifications and operational workflows.</div></div>
+<div class="phase"><div class="phase-head"><b>Phase 7 — UAT, production launch & stabilisation</b><span class="tag">4–7 working days plus monitoring</span></div><div class="phase-body"><b>Work:</b> user acceptance testing, security review, backups, domain/DNS, HTTPS, production secrets, smoke tests and monitored rollout.<br><b>Deliverables:</b> production website, deployment notes, rollback plan and handover pack.<br><b>Exit gate:</b> all launch-blocking tests pass and owner approves go-live.</div></div>
+<p class="small"><b>Planning note:</b> The phases can overlap modestly after design sign-off. Do not compress payment, security, data backup or UAT work just to meet a launch date.</p>
+</section>
+
+<section id="testing">
+<h2>10. Testing strategy and release gates</h2>
+<h3>Test layers</h3>
+<table><tr><th>Layer</th><th>What to verify</th></tr>
+<tr><td>Unit tests</td><td>Pricing, discount eligibility, tax calculations, modifier rules, state transitions, availability and validation.</td></tr>
+<tr><td>Integration tests</td><td>Database writes, auth/roles, payment webhook signature, notification provider and reservation concurrency.</td></tr>
+<tr><td>End-to-end tests</td><td>Browse menu → add to cart → checkout → payment result → staff fulfilment; reservation request → staff decision.</td></tr>
+<tr><td>Visual tests</td><td>Responsive layout, typography, image crops, menu cards, 3D fallback and browser consistency.</td></tr>
+<tr><td>Performance tests</td><td>Core Web Vitals, image payload, 3D load time, memory use and slow-network behaviour.</td></tr>
+<tr><td>Security tests</td><td>Role access, input validation, rate limiting, CSRF/XSS protections as applicable, secret exposure and webhook verification.</td></tr>
+<tr><td>Accessibility tests</td><td>Keyboard use, focus visibility, semantic headings, contrast, labels, screen-reader basics and reduced motion.</td></tr></table>
+<h3>Minimum test scenarios</h3>
+<ul class="checklist">
+<li>Menu loads correctly when the 3D scene is disabled or fails.</li><li>Unavailable products cannot be ordered.</li><li>Changing a displayed price in the browser cannot change the server-calculated order total.</li><li>Repeated checkout clicks do not create duplicate orders or charges.</li><li>Payment success is recognised only after verified provider confirmation.</li><li>Payment failure, cancellation, delayed webhook and refund cases are handled.</li><li>Two customers attempting the final reservation capacity cannot both be confirmed.</li><li>Staff roles cannot access owner-only settings.</li><li>Admin changes are reflected on the public website within the agreed refresh/cache interval.</li><li>Mobile menu, cart and forms work with touch and keyboard.</li><li>3D assets load on supported devices and a usable fallback appears elsewhere.</li><li>Backup restoration is tested, not merely assumed.</li></ul>
+<h3>Suggested release targets</h3>
+<ul><li>No open critical or high-severity defects at launch.</li><li>All critical customer journeys pass on supported browsers and target mobile devices.</li><li>Agree a mobile performance budget; measure with Lighthouse and real-device testing rather than relying on a single score.</li><li>All menu, tax, pricing, payment and reservation rules signed off by the owner.</li></ul>
+</section>
+
+<section id="security">
+<h2>11. Security, privacy and compliance</h2>
+<ul><li>Enforce server-side authorisation on every admin API and mutation. Hiding a button is not access control.</li><li>Use a trusted authentication provider or secure, maintained session implementation. Require strong owner/admin credentials and MFA where available.</li><li>Keep secrets in environment variables or a secrets manager; never commit production keys to Git or expose them in frontend bundles.</li><li>Validate and sanitise user input. Apply rate limits and bot protection to public forms, login, checkout and reservation endpoints.</li><li>Verify payment webhook signatures and make webhook processing idempotent.</li><li>Use HTTPS, secure cookies, appropriate security headers, dependency scanning and least-privilege database credentials.</li><li>Collect only necessary customer data. Publish clear privacy and cookie notices as applicable; define retention and deletion procedures.</li><li>Do not store card data or authentication secrets belonging to payment providers.</li><li>Back up the database automatically and test a restore before launch. Restrict access to backups.</li><li>Confirm applicable Indian tax, consumer, privacy and payment requirements with the café's accountant/provider or qualified adviser. The development team should not invent tax rates or legal wording.</li></ul>
+</section>
+
+<section id="deployment">
+<h2>12. Environments and deployment plan</h2>
+<h3>Environments</h3>
+<table><tr><th>Environment</th><th>Use</th><th>Data</th></tr>
+<tr><td>Local</td><td>Developer work and automated tests.</td><td>Fake seed data only.</td></tr>
+<tr><td>Preview / staging</td><td>Owner review, UAT, payment sandbox and integration tests.</td><td>Test customers and test menu; no live charges.</td></tr>
+<tr><td>Production</td><td>Public website and real business operations.</td><td>Approved live business data; restricted access.</td></tr></table>
+<h3>Deployment sequence</h3>
+<ol><li>Create Git repository and protect the main branch.</li><li>Set up local, staging and production environment variables separately.</li><li>Configure managed PostgreSQL, storage buckets, auth redirect URLs and database backups.</li><li>Connect the repository to the hosting provider and enable build/deployment checks.</li><li>Run lint, type-check, unit and integration tests on every pull request.</li><li>Deploy to staging; run end-to-end, visual, performance and owner acceptance tests.</li><li>Apply reviewed database migrations using a controlled deployment step.</li><li>Configure custom domain DNS and HTTPS. Verify redirects and canonical URL.</li><li>Configure production payment credentials and webhook endpoint only after provider approval and a successful sandbox test.</li><li>Publish approved content, run production smoke tests and monitor logs, errors and payment/order events.</li><li>Keep the previous stable deployment available for rollback. Document how to revert application code and safely handle database migrations.</li></ol>
+<h3>Environment variable template</h3>
+<div class="code"># .env.example — placeholders only; never put real secrets here
+NEXT_PUBLIC_SITE_URL=
+DATABASE_URL=
+AUTH_SECRET=
+STORAGE_URL=
+STORAGE_PUBLIC_BUCKET=
+PAYMENT_PROVIDER=
+PAYMENT_PUBLIC_KEY=
+PAYMENT_SECRET_KEY=
+PAYMENT_WEBHOOK_SECRET=
+EMAIL_PROVIDER_API_KEY=
+SMS_PROVIDER_API_KEY=</div>
+<p>Only expose values prefixed for public use when they are genuinely safe for the browser. Actual variable names depend on the selected providers. Keep .env.local out of source control.</p>
+<h3>Monitoring after launch</h3>
+<ul><li>Track application errors, API failures, database health and 3D asset loading failures.</li><li>Alert the owner/maintainer about failed payment webhooks and orders stuck in unexpected states.</li><li>Review backups, uptime, dependency/security updates and storage usage on a defined schedule.</li><li>Keep an incident contact, escalation procedure and rollback instructions.</li></ul>
+</section>
+
+<section id="operations">
+<h2>13. Operations, ownership and handover</h2>
+<h3>Owner responsibilities</h3>
+<ul><li>Supply approved logo, real interior/exterior photographs, menu, prices, item descriptions, tax details, opening hours, location and contact information.</li><li>Confirm pickup/delivery rules, service areas, reservation policies, cancellation/refund policies and staff roles.</li><li>Choose payment and notification providers and complete their business verification.</li><li>Approve the 3D visual direction and confirm commercial licences for supplied assets.</li><li>Nominate one person to approve content and one operational contact for UAT.</li></ul>
+<h3>Developer handover pack</h3>
+<ul><li>Source repository and setup instructions.</li><li>Architecture and database schema/migration history.</li><li>Environment variable inventory with secret values transferred securely.</li><li>3D asset register, source files, licences and optimisation instructions.</li><li>Admin/staff guide and role/permission matrix.</li><li>Deployment, backup/restore, rollback and incident runbooks.</li><li>Known limitations, provider subscriptions, renewal dates and maintenance responsibilities.</li></ul>
+</section>
+
+<section id="acceptance">
+<h2>14. Final acceptance checklist</h2>
+<ul class="checklist">
+<li>Brand identity and all public copy approved by café owner.</li><li>Real menu, prices, availability, tax treatment and policies verified.</li><li>All supplied 3D assets checked for technical suitability and commercial licence.</li><li>Website is responsive and accessible without requiring 3D.</li><li>All menu, contact, map and social links point to verified destinations.</li><li>Admin roles and permissions tested.</li><li>Order, payment and reservation workflows pass end-to-end tests if included in launch scope.</li><li>Reports reconcile with source orders and payments.</li><li>Privacy, terms and cancellation/refund pages approved.</li><li>HTTPS, monitoring, backups, restore test and rollback plan confirmed.</li><li>Owner and staff trained; handover documents delivered.</li><li>Owner gives written go-live approval.</li></ul>
+</section>
+
+<section id="ide">
+<h2>15. Copy-ready IDE implementation brief</h2>
+<p>Paste the following instruction into your IDE coding assistant as the project-level brief. Ask it to work phase by phase and stop for review at each phase gate. Attach the actual asset folder or asset inventory before asking it to implement the 3D scene.</p>
+<div class="code">You are the lead product engineer for the Charminar Café website.
+
+Build a production-minded, responsive website and (only in the agreed
+scope) a connected café operations platform.
+
+BRAND
+- Name: Charminar Café.
+- Direction: Hyderabad-inspired Indian café; heritage architecture
+  references balanced with contemporary hospitality.
+- Initial palette: heritage green #173E32, terracotta #8C3E25,
+  antique gold #D5AE70, warm cream #F4EDDF.
+- Do not invent the café's address, menu, prices, opening hours,
+  policies, logo or claims. Use clearly labelled placeholders until
+  the owner supplies approved content.
+
+TECHNICAL DIRECTION
+- Prefer Next.js, React and TypeScript for the web application.
+- Use Three.js / React Three Fiber for the 3D experience.
+- Use GLB/glTF assets supplied by the project owner.
+- Use PostgreSQL and a maintained authentication solution if backend
+  features are in scope.
+- Keep business rules server-side and separate from presentation.
+- Use a modular monolith; do not add unnecessary microservices.
+
+NON-NEGOTIABLE EXPERIENCE REQUIREMENTS
+- Mobile-first responsive design.
+- 3D is progressive enhancement, never a requirement for navigation,
+  menu, cart or checkout.
+- Provide a fast static fallback, loading state and error state.
+- Respect reduced-motion settings; do not autoplay sound.
+- Optimise models, textures and images; lazy-load non-critical assets.
+- Use accessible semantic HTML, keyboard navigation and visible focus.
+- Keep SEO content and important text available outside the 3D canvas.
+
+BUSINESS LOGIC
+- Recalculate prices, modifiers, discounts, taxes and totals on server.
+- Save order item/price snapshots for historical accuracy.
+- Prevent duplicate order creation and duplicate payment processing.
+- Verify payment webhooks server-side; never trust browser redirects.
+- Use concurrency-safe reservation capacity checks.
+- Apply role-based authorisation to every protected server operation.
+- Record audit events for sensitive admin changes.
+- Never store card numbers or CVV.
+
+WORK METHOD
+1. Inspect the repository and report the current structure before edits.
+2. Inspect the supplied 3D asset files; produce an inventory with
+   format, size, licence/source, preview result and optimisation needs.
+3. Produce requirements questions for unknown owner decisions.
+4. Create a proposed architecture, page map, data model and test plan.
+5. Implement Phase 0 and Phase 1 deliverables first; do not skip gates.
+6. Build the public website before optional operational modules.
+7. Integrate 3D only after the asset audit and lightweight proof of concept.
+8. Add ordering, payments, reservations, POS or inventory only when
+   explicitly included in the approved scope.
+9. Write automated tests for business rules and critical user journeys.
+10. Run lint, type-check, tests and production build after each phase.
+11. Keep README, .env.example, migrations and deployment instructions
+    updated. Never commit secrets.
+12. At the end of each phase, report files changed, decisions made,
+    tests run, results, open issues and the exact next approval needed.
+
+Do not claim a feature is complete unless it is implemented, tested,
+and connected to the required data/provider. Use sandbox credentials
+for payment testing. Do not deploy to production without owner approval.</div>
+<h3>First IDE task — do this before generating the website</h3>
+<ol><li>Create the repository and a clean project skeleton.</li><li>Ask the developer to inspect the downloaded 3D assets and create an asset inventory — do not yet build a complex 3D scene.</li><li>Generate a clickable, responsive page prototype using placeholder content.</li><li>Review the prototype and asset report with the café owner.</li><li>Only then proceed to backend and business logic.</li></ol>
+</section>
+
+<div class="notice"><b>Next project input needed:</b> Share the downloaded 3D asset folder as a ZIP (or provide a file listing with extensions and sizes), plus any café interior photographs and the existing logo. The actual assets can then be mapped to the homepage scene, menu presentation and other pages instead of guessing what the files contain.</div>
+</main>
+</div>
+<div class="footer">CHARMINAR CAFÉ · WEBSITE DEVELOPMENT BLUEPRINT · Internal project planning document</div>
+</body>
+</html>
